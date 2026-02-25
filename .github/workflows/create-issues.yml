@@ -2,6 +2,13 @@ name: Create Issues from Backlog
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'docs/github-issues-backlog.md'
+      - '.github/workflows/create-issues.yml'
 
 jobs:
   create-issues:
