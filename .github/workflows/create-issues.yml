@@ -1,6 +1,11 @@
 name: Create Issues from Backlog
 
 on:
+  push:
+    branches:
+      - "copilot/create-multiple-issues-docs"
+    paths:
+      - ".github/workflows/create-issues.yml"
   workflow_dispatch:
 
 permissions:
