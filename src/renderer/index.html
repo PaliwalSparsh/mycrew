@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyCrew - Local Personal Agent</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>MyCrew</h1>
+      <p>Local-first personal assistant runtime</p>
+      <div id="runtime-meta"></div>
+      <div class="actions">
+        <button id="pause-btn">Pause Queue</button>
+        <button id="resume-btn">Resume Queue</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card" id="onboarding-card">
+        <h2>Quick Setup Wizard (4 steps)</h2>
+        <div id="wizard-step"></div>
+        <div class="wizard-actions">
+          <button id="wizard-next">Next</button>
+          <button id="wizard-skip">Skip Wizard</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Create Task</h2>
+        <form id="task-form">
+          <label>Name <input id="name" required maxlength="80" /></label>
+          <label>Prompt <textarea id="prompt" required rows="4" placeholder="Examples:\nterminal: ls -la\nwebsearch: latest ai news\nfile:write ./notes/out.txt|hello"></textarea></label>
+          <label>Trigger
+            <select id="trigger">
+              <option value="manual">Manual</option>
+              <option value="cron">Cron</option>
+              <option value="folder">Folder Watch</option>
+            </select>
+          </label>
+          <label>Cron Schedule (for cron trigger)
+            <input id="schedule" placeholder="*/5 * * * *" />
+          </label>
+          <label>Watch Path (for folder trigger)
+            <input id="watchPath" placeholder="/Users/you/Desktop" />
+          </label>
+          <label>Priority (1 high → 10 low)
+            <input id="priority" type="number" min="1" max="10" value="5" />
+          </label>
+          <button type="submit">Create Task</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Pending Approvals</h2>
+        <ul id="approvals" class="list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>Tasks</h2>
+        <ul id="tasks" class="list"></ul>
+      </section>
+
+      <section class="card full-width">
+        <h2>Timeline</h2>
+        <ul id="logs" class="list logs"></ul>
+      </section>
+    </main>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>

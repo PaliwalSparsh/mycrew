@@ -1,0 +1,19 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body { margin: 0; background: #0d1117; color: #e6edf3; }
+header { padding: 20px; border-bottom: 1px solid #30363d; display: grid; gap: 8px; }
+main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 16px; }
+.full-width { grid-column: 1 / -1; }
+form { display: grid; gap: 10px; }
+label { display: grid; gap: 6px; font-size: 14px; }
+input, select, textarea, button { border-radius: 8px; border: 1px solid #30363d; padding: 8px 10px; background: #0d1117; color: #e6edf3; }
+button { cursor: pointer; background: #238636; border: none; font-weight: 600; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.item { border: 1px solid #30363d; border-radius: 8px; padding: 10px; }
+.item .row, .actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.logs .item { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.wizard-actions { margin-top: 10px; display: flex; gap: 8px; }
