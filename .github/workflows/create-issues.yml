@@ -1,0 +1,283 @@
+name: Create Issues from Backlog
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          create_label() {
+            local name="$1" color="$2" description="$3"
+            gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || \
+            gh label edit "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || true
+          }
+          create_label "type:feature"       "0075ca" "New feature or request"
+          create_label "type:chore"         "e4e669" "Maintenance or chore task"
+          create_label "area:platform"      "d4c5f9" "Platform-related"
+          create_label "area:ux"            "f9d0c4" "User experience"
+          create_label "area:llm"           "c2e0c6" "LLM/model-related"
+          create_label "area:security"      "e11d48" "Security"
+          create_label "area:tasks"         "fbca04" "Tasks"
+          create_label "area:runtime"       "0e8a16" "Runtime"
+          create_label "area:triggers"      "1d76db" "Triggers"
+          create_label "area:tools"         "5319e7" "Tools"
+          create_label "area:safety"        "b60205" "Safety"
+          create_label "area:observability" "006b75" "Observability"
+          create_label "area:memory"        "e99695" "Memory"
+          create_label "area:data"          "0052cc" "Data"
+          create_label "area:billing"       "fef2c0" "Billing"
+          create_label "area:extensibility" "bfd4f2" "Extensibility"
+          create_label "area:telemetry"     "c5def5" "Telemetry"
+          create_label "area:remote"        "84b6eb" "Remote"
+          create_label "area:devex"         "ededed" "Developer experience"
+          create_label "priority:P0"        "b60205" "Priority 0 - Critical"
+          create_label "priority:P1"        "e4a013" "Priority 1 - High"
+          create_label "priority:P2"        "0075ca" "Priority 2 - Medium"
+
+      - name: Create issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          create_issue() {
+            local title="$1" labels="$2" body="$3"
+            gh issue create \
+              --title "$title" \
+              --label "$labels" \
+              --body "$body" \
+              --repo ${{ github.repository }}
+          }
+
+          create_issue \
+            "Bootstrap Electron app with background Node runtime (macOS)" \
+            "type:feature,area:platform,priority:P0" \
+            "## Description
+          Set up the Electron application shell and ensure a background Node runtime starts automatically on app launch.
+
+          ## Acceptance Criteria
+          - Electron app launches on macOS.
+          - Background runtime starts with app startup.
+          - Runtime health status is visible in UI.
+          - Local dev start script works end-to-end."
+
+          create_issue \
+            "Implement 3–4 step onboarding wizard with <30s first automation goal" \
+            "type:feature,area:ux,priority:P0" \
+            "## Description
+          Create a minimal wizard flow that gets users from open app → model selection → first task creation quickly.
+
+          ## Acceptance Criteria
+          - Wizard has max 4 steps.
+          - User can choose Local (Ollama) or OpenAI BYOK.
+          - User can create first task before leaving onboarding.
+          - First successful run appears in timeline."
+
+          create_issue \
+            "Build provider abstraction + adapters for Ollama and OpenAI" \
+            "type:feature,area:llm,priority:P0" \
+            "## Description
+          Implement provider-agnostic model interface with Ollama local adapter and OpenAI API adapter.
+
+          ## Acceptance Criteria
+          - Unified provider interface.
+          - Ollama adapter can run prompts successfully.
+          - OpenAI adapter supports BYOK API key.
+          - Single global model default in settings."
+
+          create_issue \
+            "Add secure secret management for API keys" \
+            "type:feature,area:security,priority:P0" \
+            "## Description
+          Store sensitive credentials using OS keychain integration; never persist plain API keys in SQLite.
+
+          ## Acceptance Criteria
+          - OpenAI key saved/retrieved via OS secure storage.
+          - Secrets are redacted in logs.
+          - No plaintext API key in local database."
+
+          create_issue \
+            "Implement task entity + task list/detail pages" \
+            "type:feature,area:tasks,priority:P0" \
+            "## Description
+          Create core task data model and UI for creating, viewing, editing, and deleting tasks.
+
+          ## Acceptance Criteria
+          - CRUD for tasks.
+          - Task supports manual, hook, and cron modes.
+          - Task detail shows configuration and status."
+
+          create_issue \
+            "Build serial queue with task prioritization and retries" \
+            "type:feature,area:runtime,priority:P0" \
+            "## Description
+          Implement queue engine that executes tasks serially, supports priority sorting, and retries failed tasks 3 times.
+
+          ## Acceptance Criteria
+          - Serial execution guaranteed.
+          - Priority affects dequeue order.
+          - Failed tasks auto-retry up to 3 times.
+          - Failed-after-retries tasks surface clearly in logs."
+
+          create_issue \
+            "Add cron scheduler trigger harness" \
+            "type:feature,area:triggers,priority:P0" \
+            "## Description
+          Allow users to attach cron schedules to tasks and trigger runs at specified times.
+
+          ## Acceptance Criteria
+          - Cron expression validated in UI.
+          - Scheduler triggers tasks in runtime.
+          - Trigger events appear in timeline."
+
+          create_issue \
+            "Add file/folder watcher trigger harness (macOS)" \
+            "type:feature,area:triggers,priority:P0" \
+            "## Description
+          Implement file/folder change event trigger support for tasks.
+
+          ## Acceptance Criteria
+          - User can select watched path.
+          - Create/modify events can trigger task runs.
+          - Trigger origin shown in run timeline."
+
+          create_issue \
+            "Build tool layer v1 (filesystem, terminal, web search)" \
+            "type:feature,area:tools,priority:P0" \
+            "## Description
+          Create tool registry/execution framework with initial tools: filesystem operations, terminal access, web search.
+
+          ## Acceptance Criteria
+          - Agent can invoke tool actions via runtime.
+          - Tool calls logged with inputs/outputs (with redaction rules).
+          - Tool failures propagate structured errors."
+
+          create_issue \
+            "Add risky-action approval workflow + policy presets" \
+            "type:feature,area:safety,priority:P0" \
+            "## Description
+          Introduce user approval gates for risky actions and policy presets (Conservative/Balanced/Autonomous).
+
+          ## Acceptance Criteria
+          - Risky tool calls pause for user approval.
+          - Policy presets affect approval behavior.
+          - Approval decisions are audited in logs."
+
+          create_issue \
+            "Implement timeline observability and run diagnostics" \
+            "type:feature,area:observability,priority:P0" \
+            "## Description
+          Create a timeline UI showing what happened, what is happening, and what failed, including reasons.
+
+          ## Acceptance Criteria
+          - Real-time timeline with run states.
+          - Run detail includes action-by-action trace.
+          - Every failed run has human-readable failure reason."
+
+          create_issue \
+            "Implement per-task history and global summary dashboard" \
+            "type:feature,area:observability,priority:P1" \
+            "## Description
+          Add task history views and a global summary page across all tasks.
+
+          ## Acceptance Criteria
+          - Task page shows total runs, success/failure counts.
+          - Global summary aggregates all task activity.
+          - User can filter by date and task."
+
+          create_issue \
+            "Add memory system with inspect/edit/delete UX" \
+            "type:feature,area:memory,priority:P1" \
+            "## Description
+          Implement always-on memory persistence and management UI.
+
+          ## Acceptance Criteria
+          - Memory writes occur for relevant interactions/runs.
+          - User can inspect entries.
+          - User can edit and delete entries."
+
+          create_issue \
+            "Add SQLite persistence schema and migration framework" \
+            "type:feature,area:data,priority:P0" \
+            "## Description
+          Introduce SQLite schema for tasks, runs, memory, settings, usage, and plugin metadata.
+
+          ## Acceptance Criteria
+          - Schema versioning and migrations supported.
+          - Core entities persisted and reloadable.
+          - Basic backup/export path documented."
+
+          create_issue \
+            "Add OpenAI token/cost tracking dashboard" \
+            "type:feature,area:billing,priority:P1" \
+            "## Description
+          Track token usage and estimated spend for OpenAI requests.
+
+          ## Acceptance Criteria
+          - Usage tracked per run and aggregated.
+          - Dashboard shows total spend estimate.
+          - Cost can be segmented by task and timeframe."
+
+          create_issue \
+            "Define plugin architecture baseline" \
+            "type:feature,area:extensibility,priority:P1" \
+            "## Description
+          Create plugin interfaces for triggers, tools, and model providers.
+
+          ## Acceptance Criteria
+          - Plugin lifecycle contract documented.
+          - Runtime can discover/load local plugins.
+          - Example plugin included."
+
+          create_issue \
+            "Add telemetry framework with privacy controls" \
+            "type:feature,area:telemetry,priority:P1" \
+            "## Description
+          Introduce telemetry events while preserving privacy-first principles.
+
+          ## Acceptance Criteria
+          - Telemetry events are schema-defined.
+          - User-facing telemetry settings available.
+          - Sensitive data excluded/redacted by design."
+
+          create_issue \
+            "Prototype remote read-only web companion over private P2P path" \
+            "type:feature,area:remote,priority:P2" \
+            "## Description
+          Build initial web companion that can read status from the desktop runtime with privacy-preserving architecture direction (P2P).
+
+          ## Acceptance Criteria
+          - Remote companion can display task status and timeline.
+          - Read-only controls for MVP phase.
+          - Architecture note documents P2P approach and constraints."
+
+          create_issue \
+            "Add offline-only / safe mode toggle" \
+            "type:feature,area:safety,priority:P1" \
+            "## Description
+          Provide a mode that disables cloud model calls and (optionally) risky tool classes.
+
+          ## Acceptance Criteria
+          - Toggle available in settings.
+          - Cloud calls blocked when enabled.
+          - UI clearly communicates current mode."
+
+          create_issue \
+            "Establish CI checks and basic quality gates" \
+            "type:chore,area:devex,priority:P1" \
+            "## Description
+          Set up lint/test/build checks for reproducible quality.
+
+          ## Acceptance Criteria
+          - CI runs lint + tests + build.
+          - PR failures block merge on failed checks.
+          - Contribution guide updated with local commands."
