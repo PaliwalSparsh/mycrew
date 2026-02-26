@@ -27,3 +27,13 @@ Use line-based actions in task prompt:
 - `terminal: ls -la`
 - `websearch: local llm setup`
 - `file:write ./notes/out.txt|hello world`
+
+## Fix for `No such built-in module: node:sqlite`
+If you hit this Electron error, use the current implementation that relies on `better-sqlite3` (not `node:sqlite`), then rebuild native modules for your Electron version:
+
+```bash
+npm install
+npx electron-rebuild -f -w better-sqlite3
+```
+
+Then start again with `npm start`.

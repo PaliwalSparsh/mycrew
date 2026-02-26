@@ -1,13 +1,13 @@
 const path = require('node:path');
 const fs = require('node:fs');
-const { DatabaseSync } = require('node:sqlite');
+const Database = require('better-sqlite3');
 
 class RuntimeDb {
   constructor(dbPath) {
     const baseDir = path.dirname(dbPath);
     fs.mkdirSync(baseDir, { recursive: true });
-    this.db = new DatabaseSync(dbPath);
-    this.db.exec('PRAGMA journal_mode=WAL;');
+    this.db = new Database(dbPath);
+    this.db.pragma('journal_mode = WAL');
     this._migrate();
   }
 
