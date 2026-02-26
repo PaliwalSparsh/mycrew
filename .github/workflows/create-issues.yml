@@ -1,11 +1,6 @@
 name: Create Issues from Backlog
 
 on:
-  push:
-    branches:
-      - "copilot/create-multiple-issues-docs"
-    paths:
-      - ".github/workflows/create-issues.yml"
   workflow_dispatch:
 
 permissions:
@@ -24,8 +19,12 @@ jobs:
         run: |
           create_label() {
             local name="$1" color="$2" description="$3"
-            gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || \
-            gh label edit "$name" --color "$color" --description "$description" --repo ${{ github.repository }} 2>/dev/null || true
+            if gh label list --repo ${{ github.repository }} --json name --jq '.[].name' | grep -qxF "$name"; then
+              echo "Label '$name' already exists, skipping."
+            else
+              gh label create "$name" --color "$color" --description "$description" --repo ${{ github.repository }} && \
+                echo "Created label '$name'." || echo "Failed to create label '$name'."
+            fi
           }
           create_label "type:feature"       "0075ca" "New feature or request"
           create_label "type:chore"         "e4e669" "Maintenance or chore task"
@@ -56,11 +55,15 @@ jobs:
         run: |
           create_issue() {
             local title="$1" labels="$2" body="$3"
-            gh issue create \
-              --title "$title" \
-              --label "$labels" \
-              --body "$body" \
-              --repo ${{ github.repository }}
+            if gh issue list --repo ${{ github.repository }} --state all --search "\"$title\" in:title" --json title --jq '.[].title' | grep -qxF "$title"; then
+              echo "Issue '$title' already exists, skipping."
+            else
+              gh issue create \
+                --title "$title" \
+                --label "$labels" \
+                --body "$body" \
+                --repo ${{ github.repository }} && echo "Created issue '$title'."
+            fi
           }
 
           create_issue \
